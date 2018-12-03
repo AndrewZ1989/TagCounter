@@ -2,7 +2,7 @@ import yaml
 from appLogging.logger import CustomLogger
 
 
-class Store:
+class SynonymsStore:
 
     def __init__(self):
         self._doRead(self._loadYaml)
