@@ -18,7 +18,7 @@ class TagParser:
             fullname = self.synonyms.getFullName(self.path)
             if fullname is not None:
                 return self.storage.getTagsFor(fullname)
-        return None
+        return taginfo
 
     def countTagsInfo(self):
         tagsinfo = self._doCountTags(self.path)
