@@ -4,6 +4,8 @@ from appLogging.logger import CustomLogger
 
 class SynonymsStore:
 
+    _logger = CustomLogger()
+
     def __init__(self):
         self._doRead(self._loadYaml)
 
@@ -14,20 +16,8 @@ class SynonymsStore:
             return None
 
     def append(self, shortName, fullName):
-        self.__yaml[shortName] = fullName
+        self._yaml[shortName] = fullName
         self._doWrite(self._saveYaml)
-
-    def _get_yaml(self):
-        return self.__yaml
-
-    def _set_yaml(self, y):
-        self.__yaml = y
-
-    _yaml = property(_get_yaml, _set_yaml)
-
-    _logger = CustomLogger()
-
-
 
     def _loadYaml(self, stream):
         self._yaml = yaml.load(stream)

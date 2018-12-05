@@ -21,8 +21,25 @@ class TagParser:
         return taginfo
 
     def countTagsInfo(self):
-        tagsinfo = self._doCountTags(self.path)
+        tagsinfo = self._doCountTags()
         self.storage.saveTagsFor(self.path, tagsinfo)
+
+
+    def _doCountTags(self):
+        html = self._readUrl(self.path)
+        if html is None:
+            self.path = self.synonyms.getFullName(self.path)
+            html = self._readUrl(self.path)
+            if html is None:
+                return None
+
+        soup = BeautifulSoup(html, 'html.parser')
+        tagsinfo = {}
+        for tag in soup.findAll():
+            key = tag.name
+            tagsinfo[key] = tagsinfo[key] + 1 if key in tagsinfo else 1
+        return tagsinfo
+
 
     @staticmethod
     def _urivalidator(x):
@@ -34,20 +51,11 @@ class TagParser:
 
     @staticmethod
     def _readUrl(path):
-        req = urllib.request.Request('http://www.voidspace.org.uk')
-        response = urllib.request.urlopen(req)
-        return response.read().decode("utf-8")
-
-
-    def _doCountTags(self, path):
-        if not self._urivalidator(path):
-            path = self.synonyms.getFullName(path)
-
-        html = self._readUrl(path)
-        soup = BeautifulSoup(html, 'html.parser')
-
-        tagsinfo = {}
-        for tag in soup.findAll():
-            key = tag.name
-            tagsinfo[key] = tagsinfo[key] + 1 if key in tagsinfo else 1
-        return tagsinfo
+        try:
+            req = urllib.request.Request(path, unverifiable = True)
+            response = urllib.request.urlopen(req)
+            if response is None:
+                return None;
+            return response.read().decode("utf-8")
+        except:
+            return None
