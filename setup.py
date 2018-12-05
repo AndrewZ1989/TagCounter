@@ -9,5 +9,6 @@ setup(
     author='Andrey Zakharov',
     packages=['tagcounter'],
     description='Count tags in html page',
-    entry_points={'console_scripts': ['tagcounter = tagcounter:main']}
+    entry_points={'console_scripts': ['tagcounter = tagcounter:main']},
+    install_requires=['optparse', "tkinter"],
 )

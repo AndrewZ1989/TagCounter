@@ -6,14 +6,19 @@ class SynonymsStore:
 
     _logger = CustomLogger()
 
-    def __init__(self):
-        self._doRead(self._loadYaml)
+    def __init__(self, yamlPath):
+        self._yamlPath = yamlPath
+        if yamlPath is not None:
+            self._doRead(self._loadYaml)
 
     def getFullName(self, shortName):
         if shortName in self._yaml:
             return self._yaml[shortName]
         else:
             return None
+
+    def getAllValues(self):
+        return self._yaml.values()
 
     def append(self, shortName, fullName):
         self._yaml[shortName] = fullName
@@ -27,7 +32,7 @@ class SynonymsStore:
         yaml.dump(self._yaml, stream)
 
     def _do(self, action, fileMode):
-        with open("synonyms.yaml", fileMode) as stream:
+        with open(self._yamlPath, fileMode) as stream:
             try:
                 action(stream)
             except yaml.YAMLError as exc:

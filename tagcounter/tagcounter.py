@@ -19,6 +19,7 @@ def main():
                       dest="fullName",
                       help="Append full name for the resource")
 
+
     (options, _) = parser.parse_args()
 
     if options.get is not None:

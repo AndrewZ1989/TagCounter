@@ -5,9 +5,24 @@ from tagParsing.storage import TagsStorage
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
+
+class UrlReader:
+
+    def readUrl(self, url):
+        try:
+            req = urllib.request.Request(url)
+            response = urllib.request.urlopen(req)
+            if response is None:
+                return None;
+            return response.read().decode("utf-8")
+        except:
+            return None
+
+
 class TagParser:
 
-    def __init__(self, path, storage: TagsStorage, synonyms: SynonymsStore):
+    def __init__(self, path, storage: TagsStorage, synonyms: SynonymsStore, urlReader: UrlReader):
+        self.urlReader = urlReader
         self.synonyms = synonyms
         self.storage = storage
         self.path = path
@@ -26,10 +41,10 @@ class TagParser:
 
 
     def _doCountTags(self):
-        html = self._readUrl(self.path)
+        html = self.urlReader.readUrl(self.path)
         if html is None:
             self.path = self.synonyms.getFullName(self.path)
-            html = self._readUrl(self.path)
+            html = self.urlReader.readUrl(self.path)
             if html is None:
                 return None
 
@@ -49,13 +64,4 @@ class TagParser:
         except:
             return False
 
-    @staticmethod
-    def _readUrl(path):
-        try:
-            req = urllib.request.Request(path, unverifiable = True)
-            response = urllib.request.urlopen(req)
-            if response is None:
-                return None;
-            return response.read().decode("utf-8")
-        except:
-            return None
+
